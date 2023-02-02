@@ -26,6 +26,12 @@ db.Role = require("./role")(sequelize, Sequelize);
 db.Allocation = require("./allocation")(sequelize, Sequelize);
 db.Permission = require("./permission")(sequelize, Sequelize);
 db.UserRole = require("./UserRole")(sequelize, Sequelize);
+db.Offer = require("./offer")(sequelize, Sequelize);
+
+db.User.hasMany(db.Offer);
+db.Offer.belongsTo(db.User, { foreignKey: "createdBy" });
+db.User.hasMany(db.Offer);
+db.Offer.belongsTo(db.User, { foreignKey: "approvedBy" });
 
 //Many to many user and permissions
 
