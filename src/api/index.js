@@ -5,7 +5,7 @@ const candidateRoutes = require("./candidateRoutes");
 const permissionRoutes = require("./permissionRoutes");
 const roleRoutes = require("./roleRoutes");
 const allocationRoutes = require("./allocationRoutes");
-const candidateController = require("../controller/candidateController");
+const userController = require("../controller/userController");
 
 const router = express.Router();
 
@@ -14,10 +14,10 @@ router.get("/", (req, res) => {
 		message: "API - 👋🌎🌍🌏",
 	});
 });
-router.post("/login", candidateController.login);
+router.post("/login", userController.login);
 
 router.use("/emojis", emojis);
-router.use("/candidate", candidateRoutes);
+router.use("/user", candidateRoutes);
 router.use("/permission", permissionRoutes);
 router.use("/role", roleRoutes);
 router.use("/allocation", allocationRoutes);

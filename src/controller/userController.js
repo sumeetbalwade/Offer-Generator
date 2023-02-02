@@ -1,25 +1,25 @@
-const { Candidate, Permission, Role } = require("../../models");
+const { User, Permission, Role } = require("../../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const _ = require("underscore");
 const saltRounds = 10;
 
-const registerCandidate = (req, res) => {
+const registerUser = (req, res) => {
 	const data = req.body;
 
 	bcrypt.hash(data.password, 10, function (err, hash) {
 		data.password = hash;
-		Candidate.create({
+		User.create({
 			firstName: data.firstName,
 			lastName: data.lastName,
 			email: data.email,
 			password: data.password,
 		})
-			.then((create_candidate) => {
-				const { password, ...result } = create_candidate.dataValues;
+			.then((create_User) => {
+				const { password, ...result } = create_User.dataValues;
 				res.status(200).json({
 					status: "success",
-					message: "candidate created successfully",
+					message: "User created successfully",
 					data: result,
 				});
 			})
@@ -33,8 +33,8 @@ const registerCandidate = (req, res) => {
 	});
 };
 
-const getCandidateById = (req, res) => {
-	Candidate.findByPk(req.params.id, {
+const getUserById = (req, res) => {
+	User.findByPk(req.params.id, {
 		include: [
 			{
 				model: Role,
@@ -43,18 +43,18 @@ const getCandidateById = (req, res) => {
 			},
 		],
 	})
-		.then((candidates) => {
-			if (candidates) {
-				const { password, ...result } = candidates.dataValues;
+		.then((Users) => {
+			if (Users) {
+				const { password, ...result } = Users.dataValues;
 				res.status(200).json({
 					status: "success",
-					message: "candidates fetched successfully",
+					message: "Users fetched successfully",
 					data: result,
 				});
 			} else {
 				return res.status(404).json({
 					status: "failed",
-					message: "candidate not found",
+					message: "User not found",
 				});
 			}
 		})
@@ -67,9 +67,9 @@ const getCandidateById = (req, res) => {
 		});
 };
 
-const getCandidateByEmail = (req, res) => {
+const getUserByEmail = (req, res) => {
 	console.log(req.body.email);
-	Candidate.findOne({
+	User.findOne({
 		where: { email: req.body.email },
 		include: [
 			{
@@ -79,18 +79,18 @@ const getCandidateByEmail = (req, res) => {
 			},
 		],
 	})
-		.then((candidate) => {
-			if (candidate) {
-				const { password, ...result } = candidate.dataValues;
+		.then((User) => {
+			if (User) {
+				const { password, ...result } = User.dataValues;
 				res.status(200).json({
 					status: "success",
-					message: "candidates fetched successfully",
+					message: "Users fetched successfully",
 					data: result,
 				});
 			} else {
 				return res.status(404).json({
 					status: "failed",
-					message: "candidate not found",
+					message: "User not found",
 				});
 			}
 		})
@@ -103,18 +103,18 @@ const getCandidateByEmail = (req, res) => {
 		});
 };
 
-const updateCandidateById = (req, res) => {
-	Candidate.update(req.body, { where: { id: req.params.id } })
-		.then((candidate) => {
-			if (candidate) {
+const updateUserById = (req, res) => {
+	User.update(req.body, { where: { id: req.params.id } })
+		.then((User) => {
+			if (User) {
 				res.status(200).json({
 					status: "success",
-					message: "candidate updated successfully",
+					message: "User updated successfully",
 				});
 			} else {
 				return res.status(404).json({
 					status: "failed",
-					message: "candidate not found",
+					message: "User not found",
 				});
 			}
 		})
@@ -127,22 +127,22 @@ const updateCandidateById = (req, res) => {
 		});
 };
 
-const getAllCandidate = (req, res) => {
-	Candidate.findAll({
+const getAllUser = (req, res) => {
+	User.findAll({
 		attributes: { exclude: ["password"] },
 		include: [{ model: Role, as: "roles" }],
 	})
-		.then((candidates) => {
-			if (candidates.length > 0) {
+		.then((Users) => {
+			if (Users.length > 0) {
 				res.status(200).json({
 					status: "success",
-					message: "candidates fetched successfully",
-					data: candidates,
+					message: "Users fetched successfully",
+					data: Users,
 				});
 			} else {
 				return res.status(404).json({
 					status: "failed",
-					message: "candidates not found",
+					message: "Users not found",
 				});
 			}
 		})
@@ -155,18 +155,18 @@ const getAllCandidate = (req, res) => {
 		});
 };
 
-const deleteCandidate = (req, res) => {
-	Candidate.destroy({ where: { id: req.body.id } })
-		.then((candidate) => {
-			if (candidate === 1) {
+const deleteUser = (req, res) => {
+	User.destroy({ where: { id: req.body.id } })
+		.then((User) => {
+			if (User === 1) {
 				res.status(200).json({
 					status: "success",
-					message: "candidates Deleted successfully",
+					message: "Users Deleted successfully",
 				});
 			} else {
 				return res.status(404).json({
 					status: "failed",
-					message: "candidates not found",
+					message: "Users not found",
 				});
 			}
 		})
@@ -179,8 +179,8 @@ const deleteCandidate = (req, res) => {
 		});
 };
 
-const getAllPermissionsToCandidate = (req, res) => {
-	Candidate.findByPk(req.body.id, {
+const getAllPermissionsToUser = (req, res) => {
+	User.findByPk(req.body.id, {
 		attributes: { exclude: ["password"] },
 		include: [
 			{
@@ -193,11 +193,11 @@ const getAllPermissionsToCandidate = (req, res) => {
 			},
 		],
 	})
-		.then((candidate) => {
-			if (candidate) {
+		.then((User) => {
+			if (User) {
 				const data = _.uniq(
 					_.flatten(
-						candidate.roles.map((role) => {
+						User.roles.map((role) => {
 							return role.permissions.map((permission) => {
 								return permission.id;
 							});
@@ -208,7 +208,7 @@ const getAllPermissionsToCandidate = (req, res) => {
 			} else {
 				return res.status(404).json({
 					status: "failed",
-					message: "candidate not found",
+					message: "User not found",
 				});
 			}
 		})
@@ -225,15 +225,15 @@ const login = (req, res) => {
 	const { email, password } = req.body;
 	console.log(`${email} is trying to login ..`);
 
-	Candidate.findOne({ where: { email: email } })
-		.then((candidate) => {
-			if (!candidate) {
+	User.findOne({ where: { email: email } })
+		.then((User) => {
+			if (!User) {
 				return res.status(404).json({
 					status: "failed",
-					message: "candidate not found",
+					message: "User not found",
 				});
 			} else {
-				bcrypt.compare(password, candidate.password, (err, result) => {
+				bcrypt.compare(password, User.password, (err, result) => {
 					if (!result) {
 						return res.status(404).json({
 							status: "failed",
@@ -243,8 +243,8 @@ const login = (req, res) => {
 					} else {
 						const token = jwt.sign(
 							{
-								id: candidate.id,
-								email: candidate.email,
+								id: User.id,
+								email: User.email,
 								time: Date(),
 							},
 							process.env.JWT_SECRET_KEY
@@ -268,12 +268,12 @@ const login = (req, res) => {
 		});
 };
 module.exports = {
-	registerCandidate,
-	getAllCandidate,
-	getCandidateById,
-	updateCandidateById,
-	getCandidateByEmail,
-	deleteCandidate,
-	getAllPermissionsToCandidate,
+	registerUser,
+	getAllUser,
+	getUserById,
+	updateUserById,
+	getUserByEmail,
+	deleteUser,
+	getAllPermissionsToUser,
 	login,
 };

@@ -55,6 +55,7 @@ const editOffer = (req, res) => {
 };
 
 const approveOffer = (req, res) => {
+	data: req.body;
 	Offer.update({ status: "APPROVED" }, { where: { id: data.id } })
 		.then((result) => {
 			if (result) {
@@ -144,6 +145,34 @@ const getAllOffers = (req, res) => {
 			});
 		});
 };
+
+
+const getAllPendingOffers = (req, res) => {
+	Offer.findAll(req.params.id,{where: {status: "PENDING"}})
+		.then((offers) => {
+			if (offers) {
+				res.status(200).json({
+					status: "success",
+					message: "Pending offer fetched successfully",
+					data: offers,
+				});
+			} else {
+				return res.status(404).json({
+					status: "failed",
+					message: "offer not found",
+				});
+			}
+		})
+		.catch((error) => {
+			return res.status(500).json({
+				status: "failed",
+				message: "Database error",
+				error: error,
+			});
+		});
+};
+
+
 
 module.exports = {
 	addOffer,
