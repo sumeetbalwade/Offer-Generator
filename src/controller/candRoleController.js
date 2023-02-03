@@ -1,29 +1,29 @@
-const { CandidateRole, Role, Candidate } = require("../../models");
+const { UserRole, Role, User } = require("../../models");
 
 const addRoles = async (req, res) => {
 	data = req.body;
 	const bulkData = [];
-	const candidate = await Candidate.findByPk(data.candidateId);
-	if (candidate) {
+	const user = await User.findByPk(data.userId);
+	if (user) {
 		for (let i = 0; i < data.roleId.length; i++) {
 			const role = await Role.findByPk(data.roleId[i]);
 			if (role) {
-				bulkData.push({ CandidateId: candidate.id, RoleId: role.id });
+				bulkData.push({ UserId: user.id, RoleId: role.id });
 			} else {
 				res.status(404).send({ status: "Failed", message: "Role not Exist" });
 			}
 		}
-		CandidateRole.destroy({
+		UserRole.destroy({
 			where: {
-				CandidateId: candidate.id,
+				UserId: user.id,
 			},
 		}).then((m) => {
-			CandidateRole.bulkCreate(bulkData)
+			UserRole.bulkCreate(bulkData)
 				.then((result) => {
 					if (result) {
 						res.status(200).send({
 							status: "success",
-							message: "Roles added to Candidate successfully",
+							message: "Roles added to User successfully",
 							data: result,
 						});
 					}
@@ -33,7 +33,7 @@ const addRoles = async (req, res) => {
 				});
 		});
 	} else {
-		res.status(404).send({ status: "Failed", message: "Candidate not Exist" });
+		res.status(404).send({ status: "Failed", message: "User not Exist" });
 	}
 };
 

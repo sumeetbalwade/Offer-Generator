@@ -19,10 +19,7 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		position: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
+		
 		manager: {
 			type: DataTypes.STRING,
 			allowNull: false,

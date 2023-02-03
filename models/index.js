@@ -40,7 +40,7 @@ db.User.belongsToMany(db.Role, {
 	through: db.UserRole,
 });
 db.Role.belongsToMany(db.User, {
-	as: "Candidates	",
+	as: "Users",
 	through: db.UserRole,
 });
 

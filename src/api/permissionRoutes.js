@@ -6,6 +6,7 @@ router.post("/", permissionController.createPermission);
 router.get("/", permissionController.getAllPermissions);
 router.delete("/", permissionController.deletePermission);
 router.put("/", permissionController.updatePermission);
+router.get("/createMultiplePermission", permissionController.createMultiplePermissions);
 router.get("/:id", permissionController.getPermission);
 
 module.exports = router;

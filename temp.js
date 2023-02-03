@@ -1,4 +1,4 @@
-[
+const tempData = [
   {
     "id": 101,
     "name": "Create New Offer",
@@ -31,3 +31,5 @@
   }
 
 ]
+
+module.exports = tempData;

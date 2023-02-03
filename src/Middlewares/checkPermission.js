@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const { Candidate, Role, Permission, Profile } = require("../../models");
+const { User, Role, Permission, Profile } = require("../../models");
 const _ = require("underscore");
 
 module.exports = (permissionId) => {
@@ -10,10 +10,9 @@ module.exports = (permissionId) => {
 
 			let decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-			Candidate.findByPk(decoded.id, {
+			User.findByPk(decoded.id, {
 				attributes: { exclude: ["password"] },
 				include: [
-					{ model: Profile },
 					{
 						model: Role,
 						as: "roles",
@@ -28,11 +27,11 @@ module.exports = (permissionId) => {
 					},
 				],
 			})
-				.then((candidate) => {
-					if (candidate) {
+				.then((user) => {
+					if (user) {
 						const permissions = _.uniq(
 							_.flatten(
-								candidate.roles.map((role) => {
+								user.roles.map((role) => {
 									return role.permissions.map((permission) => {
 										return permission.id;
 									});
@@ -42,7 +41,7 @@ module.exports = (permissionId) => {
 						const data = _.contains(permissions, permissionId);
 
 						if (data) {
-							req.user = candidate;
+							req.user = user;
 							req.userPermissions = permissions;
 
 							next();
