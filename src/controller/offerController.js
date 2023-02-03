@@ -1,4 +1,4 @@
-const { Candidate, Permission, Role, Offer } = require("../../models");
+const {  Permission, Role, Offer } = require("../../models");
 
 const addOffer = (req, res) => {
 	data = req.body;

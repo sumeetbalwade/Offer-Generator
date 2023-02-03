@@ -1,7 +1,6 @@
 const express = require("express");
 
-const emojis = require("./emojis");
-const candidateRoutes = require("./candidateRoutes");
+const userRoutes = require("./userRoutes");
 const permissionRoutes = require("./permissionRoutes");
 const offerRoutes = require("./offerRoutes");
 const roleRoutes = require("./roleRoutes");
@@ -17,8 +16,7 @@ router.get("/", (req, res) => {
 });
 router.post("/login", userController.login);
 
-router.use("/emojis", emojis);
-router.use("/user", candidateRoutes);
+router.use("/user", userRoutes);
 router.use("/permission", permissionRoutes);
 router.use("/role", roleRoutes);
 router.use("/allocation", allocationRoutes);
