@@ -99,8 +99,9 @@ const deletePermission = (req, res) => {
 };
 
 const createMultiplePermissions = (req, res) => {
-
-  Permission.bulkCreate(tempData)
+  Permission.destroy({ truncate: { cascade: false } })
+  .then(() => {
+    Permission.bulkCreate(tempData)
     .then((result) => {
       res.status(200).json({
         status: "success",
@@ -114,6 +115,13 @@ const createMultiplePermissions = (req, res) => {
         data: error,
       });
     });
+  }, (err) => {
+    res.status(500).json({
+      status: "error",
+      data: err,
+    });
+  });
+  
 };
 
 module.exports = {
